@@ -13,5 +13,3 @@ engine = create_engine(db_url, pool_pre_ping=True)
 
 session = sessionmaker(bind = engine,autocommit=False, autoflush=False)
 
-engine2 = create_engine(db_url, pool_pre_ping=True)
-session2 = sessionmaker(bind = engine2,autocommit=False, autoflush=False)
