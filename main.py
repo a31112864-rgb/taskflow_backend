@@ -1,4 +1,5 @@
 import os
+from fastapi.middleware.cors import CORSMiddleware
 from typing import Annotated
 from fastapi import FastAPI, Depends, Response, status, Cookie
 from sqlalchemy.orm import Session
@@ -6,7 +7,20 @@ from database_modals import Base, User, Task
 from database import engine, session
 from modals import Tasks, Users
 
+origns = [
+    "http://localhost:5500"
+    "https://a31112864-rgb.github.io/TaskFlow/"
+]
+
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origns,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 IS_PROD = os.getenv("WEB_ENV") == "production"
 
