@@ -1,5 +1,6 @@
 import os
-from fastapi import FastAPI, Depends, Response, status
+from typing import Annotated
+from fastapi import FastAPI, Depends, Response, status, Cookie
 from sqlalchemy.orm import Session
 from database_modals import Base, User, Task
 from database import engine, session
@@ -46,13 +47,16 @@ def register_user(user: Users, response: Response, db: Session = Depends(get_db)
     
     return {"message": "User registered successfully", "id": db_user.id}
 
-@app.get("/tasks/{user_id}")
-def show_tasks(user_id: int, db: Session = Depends(get_db)):
-    tasks = db.query(Task).filter(Task.user_id == user_id).all
+@app.get("/tasks")
+def show_tasks(user_id: Annotated[str | None, Cookie()] = None, db: Session = Depends(get_db)):
+    tasks = db.query(Task).filter(Task.user_id == user_id).all()
     return tasks
 
-@app.post("/task/{user_id}")
-def create_task(user_id:int, task: Tasks, db: Session = Depends(get_db)):
+@app.post("/task")
+def create_task(
+    task: Tasks,
+    user_id: Annotated[str | None, Cookie()] = None,
+    db: Session = Depends(get_db)):
     db_task = Task(
         user_id = task.user_id,
         data = task.data
