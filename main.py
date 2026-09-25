@@ -38,9 +38,41 @@ def register_user(user: Users, response: Response, db: Session = Depends(get_db)
     response.set_cookie(
         key="user_id", 
         value=str(db_user.id), 
+        expires=200000000,
         httponly=True, 
         secure=True, 
         samesite="lax"
     )
     
     return {"message": "User registered successfully", "id": db_user.id}
+
+@app.get("/tasks/{user_id}")
+def show_tasks(user_id: int, db: Session = Depends(get_db)):
+    tasks = db.query(Task).filter(Task.user_id == user_id).all
+    return tasks
+
+@app.post("/task/{user_id}")
+def create_task(user_id:int, task: Tasks, db: Session = Depends(get_db)):
+    db_task = Task(
+        user_id = task.user_id,
+        data = task.data
+    )
+
+    db.add(db_task)
+    db.commit()
+    db.refresh(db_task)
+
+
+    return f"task added successfully task_id = {db_task.id}"
+
+@app.delete("/{task_id}")
+def delete_task(task_id: int, db: Session = Depends(get_db)):
+    task = db.query(Task).filter(Task.id == task_id).first()
+    db.delete(task)
+    db.commit()
+
+    return "task deleted successfully"
+
+
+
+
