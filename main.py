@@ -8,7 +8,8 @@ from database import engine, session
 from modals import Tasks, Users
 
 origns = [
-    "http://localhost:5500"
+    "http://127.0.0.1:5500",                     # Match the exact address showing in your browser path
+    "http://localhost:5500",                     # Localhost fallback line 
     "https://a31112864-rgb.github.io/TaskFlow/"
 ]
 
